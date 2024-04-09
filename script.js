@@ -100,22 +100,9 @@ function createArray(){
 let FPS = 0;
 let recentFPS = 0;
 let timePassed = 0;
-var frames = {
-	speed: 17,
-	max: -1,
-	timer: '',
-	run: function (func) {
-		this.timer = setInterval(func, this.speed);
-	},
-	start: function (func, speed = 17) {
-		this.speed = speed;
-		this.run(func);
-	}
-}
-//this is what loops the frames indefinietly
+let speedCount = 0;
 async function doFrames() {
-	let speedCount = 0;
-	frames.start(() => {
+	if(speedCount >= SPEED){
 		if(Date.now() - timePassed > 1000){
 			recentFPS = FPS;
 			FPS = 0;
@@ -125,10 +112,11 @@ async function doFrames() {
 		draw();
 		if(START && speedCount >= SPEED){
 			updateGrid();
-			speedCount = 0;
-		}
-		speedCount++;
-	}, frames.speed);
+		}	
+		speedCount = 0;
+	}
+	speedCount++;
+	window.requestAnimationFrame(doFrames);
 }
 
 /*
@@ -173,198 +161,14 @@ function updateGrid(){
 	for(let i=0;i<drawArray.length;i++){
 		for(let j=0;j<drawArray[i].length;j++){
 			let neighbors = 0;
-			//special check for corners
-			//top left
-			if(i-1 < 0 && j-1 < 0){
-				//right
-				if(drawArray[i+1][j].exists == 1){
-					neighbors++;
-				}
-				//bottom
-				if(drawArray[i][j+1].exists == 1){
-					neighbors++;
-				}
-				//bottom right
-				if(drawArray[i+1][j+1].exists == 1){
-					neighbors++;
-				}
-			}
-			//top right
-			else if(i+1 >= drawArray.length && j-1 < 0 ){
-				//left
-				if(drawArray[i-1][j].exists == 1){
-					neighbors++;
-				}
-				//bottom left
-				if(drawArray[i-1][j+1].exists == 1){
-					neighbors++;
-				}
-				//bottom
-				if(drawArray[i][j+1].exists == 1){
-					neighbors++;
-				}
-			}
-			//bottom left
-			else if(i-1 < 0 && j+1 >= drawArray[i].length){
-				//top
-				if(drawArray[i][j-1].exists == 1){
-					neighbors++;
-				}
-				//top right
-				if(drawArray[i+1][j-1].exists == 1){
-					neighbors++;
-				}
-				//right
-				if(drawArray[i+1][j].exists == 1){
-					neighbors++;
-				}
-			}
-			//bottom right
-			else if(i+1 >= drawArray.length && j+1 >= drawArray[i].length){
-				//top left
-				if(drawArray[i-1][j-1].exists == 1){
-					neighbors++;
-				}
-				//top
-				if(drawArray[i][j-1].exists == 1){
-					neighbors++;
-				}
-				//left
-				if(drawArray[i-1][j].exists == 1){
-					neighbors++;
-				}
-			}
-			else if(i-1 >= 0 && i+1 < drawArray.length){
-				//within x index
-				if(j-1 >= 0 && j+1 < drawArray[i].length){
-					//within y index
-					//check all neighbors
-					//top left
-					if(drawArray[i-1][j-1].exists == 1){
-						neighbors++;
-					}
-					//top
-					if(drawArray[i][j-1].exists == 1){
-						neighbors++;
-					}
-					//top right
-					if(drawArray[i+1][j-1].exists == 1){
-						neighbors++;
-					}
-					//left
-					if(drawArray[i-1][j].exists == 1){
-						neighbors++;
-					}
-					//right
-					if(drawArray[i+1][j].exists == 1){
-						neighbors++;
-					}
-					//bottom left
-					if(drawArray[i-1][j+1].exists == 1){
-						neighbors++;
-					}
-					//bottom
-					if(drawArray[i][j+1].exists == 1){
-						neighbors++;
-					}
-					//bottom right
-					if(drawArray[i+1][j+1].exists == 1){
-						neighbors++;
-					}
-				}
-				else if(j-1 < 0){
-					//top of screen out
-					//left
-					if(drawArray[i-1][j].exists == 1){
-						neighbors++;
-					}
-					//right
-					if(drawArray[i+1][j].exists == 1){
-						neighbors++;
-					}
-					//bottom left
-					if(drawArray[i-1][j+1].exists == 1){
-						neighbors++;
-					}
-					//bottom
-					if(drawArray[i][j+1].exists == 1){
-						neighbors++;
-					}
-					//bottom right
-					if(drawArray[i+1][j+1].exists == 1){
-						neighbors++;
-					}
-				}
-				else{
-					//bottom of screen for y
-					//top left
-					if(drawArray[i-1][j-1].exists == 1){
-						neighbors++;
-					}
-					//top
-					if(drawArray[i][j-1].exists == 1){
-						neighbors++;
-					}
-					//top right
-					if(drawArray[i+1][j-1].exists == 1){
-						neighbors++;
-					}
-					//left
-					if(drawArray[i-1][j].exists == 1){
-						neighbors++;
-					}
-					//right
-					if(drawArray[i+1][j].exists == 1){
-						neighbors++;
-					}
-				}
-			}
-			else if(i-1 < 0){
-				//left of screen
-				//top
-				if(drawArray[i][j-1].exists == 1){
-					neighbors++;
-				}
-				//top right
-				if(drawArray[i+1][j-1].exists == 1){
-					neighbors++;
-				}
-				//right
-				if(drawArray[i+1][j].exists == 1){
-					neighbors++;
-				}
-				//bottom
-				if(drawArray[i][j+1].exists == 1){
-					neighbors++;
-				}
-				//bottom right
-				if(drawArray[i+1][j+1].exists == 1){
-					neighbors++;
-				}
-			}
-			else{
-				//right of screen
-				//top left
-				if(drawArray[i-1][j-1].exists == 1){
-					neighbors++;
-				}
-				//top
-				if(drawArray[i][j-1].exists == 1){
-					neighbors++;
-				}
-				//left
-				if(drawArray[i-1][j].exists == 1){
-					neighbors++;
-				}
-				//bottom left
-				if(drawArray[i-1][j+1].exists == 1){
-					neighbors++;
-				}
-				//bottom
-				if(drawArray[i][j+1].exists == 1){
-					neighbors++;
-				}
-			}
+			neighbors += drawArray[(i-1+drawArray.length)%drawArray.length][(j-1+drawArray[i].length)%drawArray[i].length].exists
+			neighbors += drawArray[i][(j-1+drawArray[i].length)%drawArray[i].length].exists
+			neighbors += drawArray[(i+1+drawArray.length)%drawArray.length][(j-1+drawArray[i].length)%drawArray[i].length].exists
+			neighbors += drawArray[(i-1+drawArray.length)%drawArray.length][j].exists
+			neighbors += drawArray[(i+1+drawArray.length)%drawArray.length][j].exists
+			neighbors += drawArray[(i-1+drawArray.length)%drawArray.length][(j+1+drawArray[i].length)%drawArray[i].length].exists
+			neighbors += drawArray[i][(j+1+drawArray[i].length)%drawArray[i].length].exists
+			neighbors += drawArray[(i+1+drawArray.length)%drawArray.length][(j+1+drawArray[i].length)%drawArray[i].length].exists
 			if(drawArray[i][j].exists == 1){
 				//cell is currently alive
 				if(neighbors < 2 || neighbors > 3){
